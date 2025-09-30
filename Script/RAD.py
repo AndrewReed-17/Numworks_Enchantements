@@ -7,16 +7,17 @@ import math
 
 def main():
     while True:
-        print("\nMode select\n===========\n1. Rad to Deg\n2. Deg to Rad\n3. Quit")
+        print("\nMode select\n===========\n1. Rad to Deg\n2. Deg to Rad\n0. Quit")
         gg = input("Mode : ")
         if gg == "1":
             RtD()
         elif gg == "2":
             DtR()
-        elif gg == "3":
+        elif gg == "0":
             break
         else:
             print("Choix invalide.")
+            input("...")
 
 def RtD():
     print("\nConversion radians → degres")
@@ -30,6 +31,7 @@ def RtD():
         print("\n===============\n{}π/{} radians = {} degres".format(f, d, r))
     except ValueError:
         print("Erreur : valeur non valide.")
+    input("...")
 
 def DtR():
     print("\nConversion degres → radians")
@@ -56,6 +58,7 @@ def DtR():
             print("\n===============\n{}° = {}{}/{}π radians".format(d, s, num, den))
     except ValueError:
         print("Erreur : valeur non valide.")
+    input("...")
 
 # from the Frac.py LIB ; 1.0 & 30.9.25
 def pgcd(a, b):

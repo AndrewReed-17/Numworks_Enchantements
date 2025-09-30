@@ -36,7 +36,13 @@ Il s’agit d’une collection de scripts Python destinée à faciliter et autom
 
 | **Nom** | **Fonction**                              |
 |:-------:|:------------------------------------------|
-| `rad`  | Convertit des degrés en radians & vis versa |  
+| `rad`  | Convertit des degrés en radians & vis versa | 
+| `mpr`  | Détermine la mesure primitive d'un radiants |  
+
+
+#### Formatage de menu  
+
+Présente la structure d’un menu dans lequel vous devez sélectionner le mode au moyen d’options numérotées.  
 
 ### Sommaire des libreries  
 
@@ -45,10 +51,6 @@ due au fait que la numworks ne posséde pas de variable d'environements il faut 
 | **Nom** | **Fonction**                              |
 |:-------:|:------------------------------------------|
 | `Frac`  | forme fractionaire sur un entier avec une logique binaire |  
-
-#### Formatage de menu  
-
-Présente la structure d’un menu dans lequel vous devez sélectionner le mode au moyen d’options numérotées.  
 
 ---
 
