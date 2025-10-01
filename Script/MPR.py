@@ -2,7 +2,7 @@ import math
 
 def main():
     while True:
-        print("\nMode select\n===========\n1. Finding Primal Measure\n0. Quit")
+        print("\nMode select\n===========\n1. Finding Main Measure\n0. Quit")
         gg = input("Mode : ")
         if gg == "1":
             FPM()
@@ -13,7 +13,7 @@ def main():
             input("...")
 
 def FPM():
-    print("\nRadians → Mesure primitive")
+    print("\nRadians → Mesure principale")
     f = input("Facteur de π (numerateur) : ")
     d = input("Denominateur de π : ")
 
@@ -40,7 +40,7 @@ def FPM():
         if len(expr) > 29:
             expr = expr[:29]
 
-        print("\n===============\nMesure primitive = {}".format(expr))
+        print("\n===============\nMesure principale = {}".format(expr))
         input("...")
 
     except ValueError:
