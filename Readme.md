@@ -37,7 +37,7 @@ Il s’agit d’une collection de scripts Python destinée à faciliter et autom
 | **Nom** | **Fonction**                              |
 |:-------:|:------------------------------------------|
 | `rad`  | Convertit des degrés en radians & vis versa | 
-| `mpr`  | Détermine la mesure primitive d'un radiants |  
+| `mpr`  | Détermine la mesure principale d'un radiants |  
 
 
 #### Formatage de menu  
