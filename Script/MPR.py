@@ -1,5 +1,15 @@
 import math
 
+
+""" 
+Todo replace the PGCD
+Todo Found out a way to make in the MM
+
+! do not make the MM if it's higher than 12
+
+WIP Overalls
+"""
+
 def main():
     while True:
         print("\nMode select\n===========\n1. Finding Main Measure\n0. Quit")
