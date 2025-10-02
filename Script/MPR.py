@@ -1,15 +1,5 @@
 import math
 
-
-""" 
-Todo replace the PGCD
-Todo Found out a way to make in the MM
-
-! do not make the MM if it's higher than 12
-
-WIP Overalls
-"""
-
 def main():
     while True:
         print("\nMode select\n===========\n1. Finding Main Measure\n0. Quit")
@@ -34,44 +24,37 @@ def FPM():
             print("Erreur : denominateur nul.")
             return
 
-        g = pgcd(abs(f), abs(d))
-        f //= g
-        d //= g
+        # Angle en radians (float)
+        theta = (f / d) * math.pi
 
-        # Gestion du signe
-        s = "-" if f < 0 else ""
-        f = abs(f)
+        # Réduction dans [-pi, pi]
+        theta = (theta + math.pi) % (2 * math.pi) - math.pi
 
-        if d == 1:
-            expr = "{}{}π".format(s, f)
+        # Reconstruire fraction sur π
+        ratio = theta / math.pi
+        # approx fraction, mais bornée (éviter dénominateurs géants)
+        from fractions import Fraction
+        frac = Fraction(ratio).limit_denominator(12)
+
+        num, den = frac.numerator, frac.denominator
+
+        # Construction de l’expression
+        if den == 1:
+            expr = f"{num}π"
+        elif num == 0:
+            expr = "0"
         else:
-            expr = "{}{}/{}π".format(s, f, d)
-
+            expr = f"{num}/{den}π"
         if len(expr) > 29:
             expr = expr[:29]
 
-        print("\n===============\nMesure principale = {}".format(expr))
+        print(f"\n===============\nMesure principale = {expr}")
         input("...")
 
     except ValueError:
         print("Erreur : valeur non valide.")
 
-# from the Frac.py LIB ; 1.0 & 30.9.25
-def pgcd(a, b):
-    """PGCD binaire (algorithme de Stein)"""
-    if a == 0: return b
-    if b == 0: return a
-    shift = 0
-    while ((a | b) & 1) == 0:
-        a >>= 1; b >>= 1; shift += 1
-    while (a & 1) == 0:
-        a >>= 1
-    while b:
-        while (b & 1) == 0: b >>= 1
-        if a > b: a, b = b, a
-        b -= a
-    return a << shift
 
 
-print("Robert Henning\n30.9.2025\nMIT Licenses\nNumworks Enchantements")
+print("Robert Henning\n 30.9.2025\n MIT Licenses\n Numworks Enchantements")
 main()
