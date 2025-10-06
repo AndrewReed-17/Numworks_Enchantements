@@ -27,7 +27,7 @@ def RtD():
     try:
         f = int(f)
         d = int(d)
-        r = (f * math.π / d) * (180 / math.π)
+        r = (f * math.pi / d) * (180 / math.pi)
         print("\n===============\n{}π/{} radians = {} degres".format(f, d, r))
     except ValueError:
         print("Erreur : valeur non valide.")
