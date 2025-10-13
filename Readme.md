@@ -53,6 +53,7 @@ Du fait que la NumWorks ne possède pas de variables d’environnement, il faut 
 
 #### Fonctionnements des rationnels (Frac.py)
 
+*rendue inutile par la class fraction de math.py*
 
 Cette bibliothèque permet de convertir **deux entiers relatifs** (un numérateur et un dénominateur) en un **unique entier**. L’entier résultant est qualifié de **pack** ou d’**agglomération**.  
 
