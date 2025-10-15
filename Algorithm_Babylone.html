@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Animation suites de rectangles Rₙ</title>
+<style>
+  :root{font-family:system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial; --bg:#f5f5f7; --panel:#ffffff; --muted:#666;}
+  body{margin:0;background:var(--bg);color:#111;display:flex;flex-direction:column;align-items:center;padding:18px;}
+  .frame{width:980px;max-width:96vw;background:var(--panel);box-shadow:0 6px 18px rgba(0,0,0,.08);border-radius:10px;padding:14px;display:grid;grid-template-columns:1fr 320px;gap:12px}
+  canvas{background:linear-gradient(180deg,#fff,#fafafa);border-radius:6px;border:1px solid #ddd;display:block;width:100%;height:560px}
+  .controls{display:flex;flex-direction:column;gap:10px;padding:6px}
+  .row{display:flex;gap:8px;align-items:center}
+  button{padding:8px 12px;border-radius:6px;border:1px solid #bbb;background:#fff;cursor:pointer}
+  input[type=range]{width:100%}
+  .stat{background:#f7f7f9;padding:8px;border-radius:6px;border:1px solid #eee;font-size:13px;color:var(--muted)}
+  label{font-size:13px;color:var(--muted);margin-bottom:6px;display:block}
+  .small{font-size:13px;color:var(--muted)}
+  .bigval{font-weight:600;font-size:18px}
+  footer{width:980px;max-width:96vw;margin-top:10px;color:var(--muted);font-size:13px;text-align:right}
+</style>
+</head>
+<body>
+  <div class="frame">
+    <div>
+      <canvas id="c" width="800" height="560"></canvas>
+    </div>
+    <div class="controls">
+      <div class="row">
+        <button id="play">► Lecture</button>
+        <button id="pause">⏸ Pause</button>
+        <button id="step">→ Pas</button>
+        <button id="back">← Reculer</button>
+        <button id="reset">⟲ Réinitialiser</button>
+      </div>
+
+      <div>
+        <label for="maxN">Étape n (curseur) : <span id="nlabel">0</span></label>
+        <input id="sliderN" type="range" min="0" max="50" step="1" value="0">
+      </div>
+
+      <div>
+        <label for="speed">Vitesse (ms par étape) : <span id="speedLabel">800</span> ms</label>
+        <input id="speed" type="range" min="50" max="2000" step="10" value="800">
+      </div>
+
+      <div class="stat">
+        <div class="small">n actuel</div>
+        <div class="bigval" id="nval">0</div>
+        <div class="small" style="margin-top:8px">Longueur Lₙ</div>
+        <div id="Lval" class="bigval">5.000</div>
+        <div class="small" style="margin-top:8px">Largeur lₙ</div>
+        <div id="lval" class="bigval">1.000</div>
+        <div class="small" style="margin-top:8px">Aire (constante)</div>
+        <div id="Aval" class="bigval">5.000</div>
+      </div>
+
+      <div style="margin-top:6px" class="small">Max N pré-calculé : <span id="maxNdisplay">50</span></div>
+    </div>
+  </div>
+
+  <footer>Suite définie par L₀=5, l₀=1 ; Lₙ₊₁=(Lₙ+lₙ)/2 ; lₙ₊₁=10/(Lₙ+lₙ)</footer>
+
+<script>
+(() => {
+  // paramètres initiaux
+  const L0 = 5, l0 = 1;
+  // éléments
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const playBtn = document.getElementById('play');
+  const pauseBtn = document.getElementById('pause');
+  const stepBtn = document.getElementById('step');
+  const backBtn = document.getElementById('back');
+  const resetBtn = document.getElementById('reset');
+  const sliderN = document.getElementById('sliderN');
+  const nlabel = document.getElementById('nlabel');
+  const speed = document.getElementById('speed');
+  const speedLabel = document.getElementById('speedLabel');
+  const Lval = document.getElementById('Lval');
+  const lval = document.getElementById('lval');
+  const Aval = document.getElementById('Aval');
+  const nval = document.getElementById('nval');
+  const maxNdisplay = document.getElementById('maxNdisplay');
+
+  // état
+  let sequence = []; // tableau d'objets {L,l}
+  let currentN = 0;
+  let playing = false;
+  let timerId = null;
+  let maxN = parseInt(sliderN.max,10);
+
+  function computeSequence(upTo) {
+    sequence = new Array(upTo+1);
+    sequence[0] = {L: L0, l: l0};
+    for (let i=1;i<=upTo;i++){
+      const prev = sequence[i-1];
+      const sum = prev.L + prev.l;
+      const Lp = sum/2;
+      const lp = 10 / sum;
+      sequence[i] = {L: Lp, l: lp};
+    }
+  }
+
+  function format(x) { return Number(x).toFixed(4).replace(/\.?0+$/,''); }
+
+  function drawRectAt(n) {
+    const {L,l} = sequence[n];
+    // Clear
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    // compute scale and margins so the rectangle fits nicely
+    // choose use reserve across whole precomputed sequence to avoid resizes
+    let maxL = 0, maxl = 0;
+    for (let i=0;i<sequence.length;i++){
+      maxL = Math.max(maxL, sequence[i].L);
+      maxl = Math.max(maxl, sequence[i].l);
+    }
+    const pad = 36;
+    const availW = canvas.width - 2*pad;
+    const availH = canvas.height - 2*pad;
+    const scale = Math.min(availW / (maxL || 1), availH / (maxl || 1));
+
+    // rectangle dims in pixels
+    const w = sequence[n].L * scale;
+    const h = sequence[n].l * scale;
+
+    // center it
+    const x0 = (canvas.width - w)/2;
+    const y0 = (canvas.height - h)/2;
+
+    // draw grid subtle
+    ctx.save();
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.strokeStyle = '#eef0f2';
+    ctx.lineWidth = 1;
+    for (let gx = pad; gx < canvas.width; gx += 40) {
+      ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,canvas.height); ctx.stroke();
+    }
+    for (let gy = pad; gy < canvas.height; gy += 40) {
+      ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(canvas.width,gy); ctx.stroke();
+    }
+    ctx.restore();
+
+    // shadow and rectangle
+    ctx.save();
+    ctx.shadowColor = 'rgba(0,0,0,0.12)';
+    ctx.shadowBlur = 12;
+    ctx.fillStyle = '#dfeff7';
+    ctx.fillRect(x0, y0, w, h);
+    ctx.restore();
+
+    // border
+    ctx.strokeStyle = '#2b3a55';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x0, y0, w, h);
+
+    // axes labels: draw L (horizontal) and l (vertical) arrows
+    ctx.save();
+    ctx.fillStyle = '#222';
+    ctx.font = '14px system-ui,Segoe UI,Roboto,Arial';
+    // L arrow
+    ctx.beginPath();
+    ctx.moveTo(x0, y0 + h + 12);
+    ctx.lineTo(x0 + w + 12, y0 + h + 12);
+    ctx.strokeStyle = '#333';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+    ctx.fillText('Lₙ = ' + format(sequence[n].L), x0 + w/2 - 30, y0 + h + 30);
+    // l arrow
+    ctx.beginPath();
+    ctx.moveTo(x0 - 12, y0 + h);
+    ctx.lineTo(x0 - 12, y0);
+    ctx.stroke();
+    ctx.fillText('lₙ = ' + format(sequence[n].l), x0 - 110, y0 + h/2 + 6);
+    ctx.restore();
+
+    // small annotation of area
+    ctx.save();
+    ctx.fillStyle = '#0b6';
+    ctx.font = '13px system-ui';
+    const area = sequence[n].L * sequence[n].l;
+    ctx.fillText('A = ' + format(area), x0 + 6, y0 + 18);
+    ctx.restore();
+
+    // header
+    ctx.save();
+    ctx.fillStyle = '#111';
+    ctx.font = '16px system-ui,Arial';
+    ctx.fillText('Rectangle Rₙ (n = ' + n + ')', 12, 22);
+    ctx.restore();
+  }
+
+  function updateUI() {
+    const s = sequence[currentN];
+    nlabel.textContent = currentN;
+    nval.textContent = currentN;
+    Lval.textContent = format(s.L);
+    lval.textContent = format(s.l);
+    Aval.textContent = format(s.L * s.l);
+    sliderN.value = currentN;
+  }
+
+  function playStart() {
+    if (playing) return;
+    playing = true;
+    clearInterval(timerId);
+    timerId = setInterval(() => {
+      if (currentN < maxN) {
+        currentN++;
+        drawRectAt(currentN);
+        updateUI();
+      } else {
+        clearInterval(timerId);
+        playing = false;
+      }
+    }, Number(speed.value));
+  }
+
+  function playPause() {
+    playing = false;
+    clearInterval(timerId);
+    timerId = null;
+  }
+
+  // events
+  playBtn.addEventListener('click', () => { playStart(); });
+  pauseBtn.addEventListener('click', () => { playPause(); });
+  stepBtn.addEventListener('click', () => {
+    playPause();
+    if (currentN < maxN) currentN++;
+    drawRectAt(currentN);
+    updateUI();
+  });
+  backBtn.addEventListener('click', () => {
+    playPause();
+    if (currentN > 0) currentN--;
+    drawRectAt(currentN);
+    updateUI();
+  });
+  resetBtn.addEventListener('click', () => {
+    playPause();
+    currentN = 0;
+    computeSequence(maxN);
+    drawRectAt(currentN);
+    updateUI();
+  });
+  sliderN.addEventListener('input', () => {
+    playPause();
+    const v = parseInt(sliderN.value,10);
+    currentN = v;
+    drawRectAt(currentN);
+    updateUI();
+  });
+  speed.addEventListener('input', () => {
+    speedLabel.textContent = speed.value;
+    if (playing) {
+      playPause();
+      playStart();
+    }
+  });
+
+  // if user changes maximum N (via slider max attribute), recompute
+  sliderN.addEventListener('change', () => {
+    maxN = parseInt(sliderN.max,10);
+    maxNdisplay.textContent = maxN;
+    computeSequence(maxN);
+    if (currentN > maxN) currentN = maxN;
+    drawRectAt(currentN);
+    updateUI();
+  });
+
+  // initial compute
+  computeSequence(maxN);
+  drawRectAt(0);
+  updateUI();
+
+  // responsive canvas: preserve internal pixels
+  function resizeCanvas() {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    drawRectAt(currentN);
+  }
+  // set initial CSS height/width to match attributes
+  canvas.style.width = canvas.width + 'px';
+  canvas.style.height = canvas.height + 'px';
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+})();
+</script>
+</body>
+</html>
