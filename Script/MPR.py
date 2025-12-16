@@ -1,62 +1,70 @@
-from math import *
+import math
 
-if not pi :
-    pi = 22/7
+pi = math.pi
+
+def approx_frac(x, max_den=12):
+    best_num = 0
+    best_den = 1
+    best_err = abs(x)
+
+    for den in range(1, max_den + 1):
+        num = round(x * den)
+        err = abs(x - num / den)
+        if err < best_err:
+            best_err = err
+            best_num = num
+            best_den = den
+
+    return best_num, best_den
+
+
+def FPM():
+    print("\nRadians → Mesure principale")
+
+    try:
+        f = int(input("Facteur de π (numérateur) : "))
+        d = int(input("Dénominateur de π : "))
+
+        if d == 0:
+            print("Erreur : dénominateur nul.")
+            return
+
+        theta = (f / d) * pi
+        theta = (theta + pi) % (2 * pi) - pi
+
+        ratio = theta / pi
+        num, den = approx_frac(ratio, 12)
+
+        if num == 0:
+            expr = "0"
+        elif den == 1:
+            expr = str(num) + "π"
+        else:
+            expr = str(num) + "/" + str(den) + "π"
+
+        print("\n====================")
+        print("Mesure principale =", expr)
+
+    except:
+        print("Erreur : entrée invalide.")
 
 
 def main():
     while True:
-        print("\nMode select\n===========\n1. Finding Main Measure\n0. Quit")
-        gg = input("Mode : ")
-        if gg == "1":
+        print("\nSélection du mode")
+        print("=================")
+        print("1. Mesure principale")
+        print("0. Quitter")
+
+        c = input("Mode : ")
+
+        if c == "1":
             FPM()
-        elif gg == "0":
+        elif c == "0":
             break
         else:
             print("Choix invalide.")
-            input("...")
 
-def FPM():
-    print("\nRadians → Mesure principale")
-    f = input("Facteur de π (numerateur) : ")
-    d = input("Denominateur de π : ")
 
-    try:
-        f = int(f)
-        d = int(d)
-        if d == 0:
-            print("Erreur : denominateur nul.")
-            return
-
-        # Angle en radians (float)
-        theta = (f / d) * pi
-
-        # Réduction dans [-pi, pi]
-        theta = (theta + pi) % (2 * pi) - pi
-
-        # Reconstruire fraction sur π
-        ratio = theta / pi
-        # approx fraction, mais bornée (éviter dénominateurs géants)
-        from fractions import Fraction
-        frac = Fraction(ratio).limit_denominator(12)
-
-        num, den = frac.numerator, frac.denominator
-
-        # Construction de l’expression
-        if den == 1:
-            expr = "{}π".format(num)
-        elif num == 0:
-            expr = "0"
-        else:
-            expr = "{}/{}π".format(num, den)
-        if len(expr) > 29:
-            expr = expr[:29]
-
-        print("\n===============\nMesure principale = {}".format(expr))
-        input("...")
-
-    except ValueError:
-        print("Erreur : valeur non valide.")
-
-print("Robert Henning\n 30.9.2025\n MIT Licenses\n Numworks Enchantements | Github")
+print("Robert Henning\n 30.9.2025\n MIT Licenses\n Numworks Enchantements \n Github")
 main()
