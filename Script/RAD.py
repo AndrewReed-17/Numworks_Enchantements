@@ -3,7 +3,7 @@ Note :
 - Char max ; 29
 """
 
-import math
+from math import *
 
 def main():
     while True:
