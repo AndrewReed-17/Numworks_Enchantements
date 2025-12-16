@@ -40,21 +40,19 @@ def FPM():
 
         # Construction de l’expression
         if den == 1:
-            expr = f"{num}π"
+            expr = "{}π".format(num)
         elif num == 0:
             expr = "0"
         else:
-            expr = f"{num}/{den}π"
+            expr = "{}/{}π".format(num, den)
         if len(expr) > 29:
             expr = expr[:29]
 
-        print(f"\n===============\nMesure principale = {expr}")
+        print("\n===============\nMesure principale = {}".format(expr))
         input("...")
 
     except ValueError:
         print("Erreur : valeur non valide.")
 
-
-
-print("Robert Henning\n 30.9.2025\n MIT Licenses\n Numworks Enchantements")
+print("Robert Henning\n 30.9.2025\n MIT Licenses\n Numworks Enchantements | Github")
 main()
