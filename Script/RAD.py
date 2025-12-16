@@ -1,5 +1,4 @@
-from math import pi, *
-
+from math import *
 """
 Note : 
 - Char max ; 29
@@ -30,7 +29,7 @@ def RtD():
     try:
         f = int(f)
         d = int(d)
-        r = (f * pi / d) * (180 / math.pi)
+        r = (f * pi / d) * (180 / pi)
         print("\n===============\n{}π/{} radians = {} degres".format(f, d, r))
     except ValueError:
         print("Erreur : valeur non valide.")
