@@ -1,4 +1,4 @@
-import math
+from math import *
 
 def main():
     while True:
