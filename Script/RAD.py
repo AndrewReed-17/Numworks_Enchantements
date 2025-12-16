@@ -77,5 +77,5 @@ def pgcd(a, b):
     return a << shift
 
 
-print("Robert Henning\n 24.9.2025 - 30.9.2025\n MIT Licenses\n Numworks Enchatements")
+print("Robert Henning\n 24.9.2025 - 30.9.2025\n MIT Licenses\n Numworks Enchatements | Github")
 main()
