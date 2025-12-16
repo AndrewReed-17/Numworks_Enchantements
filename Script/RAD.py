@@ -1,16 +1,17 @@
-from math import *
-"""
-Note : 
-- Char max ; 29
-"""
+import math
 
-if not pi :
-  pi = 22/7
+pi = math.pi
 
 def main():
     while True:
-        print("\nMode select\n===========\n1. Rad to Deg\n2. Deg to Rad\n0. Quit")
+        print("\nMode select")
+        print("===========")
+        print("1. Rad → Deg")
+        print("2. Deg → Rad")
+        print("0. Quit")
+
         gg = input("Mode : ")
+
         if gg == "1":
             RtD()
         elif gg == "2":
@@ -21,26 +22,47 @@ def main():
             print("Choix invalide.")
             input("...")
 
+
 def RtD():
-    print("\nConversion radians → degres")
-    f = input("Facteur de π (numerateur) : ")
-    d = input("Denominateur de π : ")
+    print("\nConversion radians → degrés")
 
     try:
-        f = int(f)
-        d = int(d)
-        r = (f * pi / d) * (180 / pi)
-        print("\n===============\n{}π/{} radians = {} degres".format(f, d, r))
-    except ValueError:
+        f = int(input("Facteur de π (numérateur) : "))
+        d = int(input("Dénominateur de π : "))
+
+        if d == 0:
+            print("Erreur : dénominateur nul.")
+            input("...")
+            return
+
+        # Conversion exacte
+        num = 180 * f
+        den = d
+
+        g = pgcd(abs(num), abs(den))
+        num //= g
+        den //= g
+
+        if den == 1:
+            r = str(num)
+        else:
+            r = str(num) + "/" + str(den)
+
+        print("\n================")
+        print(str(f) + "π/" + str(d) + " radians = " + r + " degrés")
+
+    except:
         print("Erreur : valeur non valide.")
+
     input("...")
 
+
 def DtR():
-    print("\nConversion degres → radians")
-    d = input("Degres : ")
+    print("\nConversion degrés → radians")
 
     try:
-        d = int(d) 
+        d = int(input("Degrés : "))
+
         num = d
         den = 180
 
@@ -54,30 +76,41 @@ def DtR():
         else:
             s = ""
 
+        print("\n================")
         if den == 1:
-            print("\n===============\n{}° = {}π radians".format(d, s + str(num)))
+            print(str(d) + "° = " + s + str(num) + "π radians")
         else:
-            print("\n===============\n{}° = {}{}/{}π radians".format(d, s, num, den))
-    except ValueError:
+            print(str(d) + "° = " + s + str(num) + "/" + str(den) + "π radians")
+
+    except:
         print("Erreur : valeur non valide.")
+
     input("...")
 
-# from the Frac.py LIB ; 1.0 & 30.9.25
+
+# PGCD binaire (Stein)
 def pgcd(a, b):
-    """PGCD binaire (algorithme de Stein)"""
     if a == 0: return b
     if b == 0: return a
+
     shift = 0
     while ((a | b) & 1) == 0:
-        a >>= 1; b >>= 1; shift += 1
+        a >>= 1
+        b >>= 1
+        shift += 1
+
     while (a & 1) == 0:
         a >>= 1
+
     while b:
-        while (b & 1) == 0: b >>= 1
-        if a > b: a, b = b, a
+        while (b & 1) == 0:
+            b >>= 1
+        if a > b:
+            a, b = b, a
         b -= a
+
     return a << shift
 
 
-print("Robert Henning\n 24.9.2025 - 30.9.2025\n MIT Licenses\n Numworks Enchatements | GitHub")
+print("Robert Henning\n 24.9.2025 - 16.12.2025\n MIT Licenses\n Numworks Enchatements \n GitHub")
 main()
