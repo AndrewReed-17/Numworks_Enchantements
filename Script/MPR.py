@@ -1,4 +1,8 @@
-from math import *
+from math import pi, *
+
+if not pi :
+    pi = 22/7
+
 
 def main():
     while True:
@@ -28,10 +32,10 @@ def FPM():
         theta = (f / d) * math.pi
 
         # Réduction dans [-pi, pi]
-        theta = (theta + math.pi) % (2 * math.pi) - math.pi
+        theta = (theta + pi) % (2 * pi) - pi
 
         # Reconstruire fraction sur π
-        ratio = theta / math.pi
+        ratio = theta / pi
         # approx fraction, mais bornée (éviter dénominateurs géants)
         from fractions import Fraction
         frac = Fraction(ratio).limit_denominator(12)
