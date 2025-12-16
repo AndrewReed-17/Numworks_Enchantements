@@ -1,4 +1,4 @@
-from math import pi, *
+from math import *
 
 if not pi :
     pi = 22/7
@@ -29,7 +29,7 @@ def FPM():
             return
 
         # Angle en radians (float)
-        theta = (f / d) * math.pi
+        theta = (f / d) * pi
 
         # Réduction dans [-pi, pi]
         theta = (theta + pi) % (2 * pi) - pi
