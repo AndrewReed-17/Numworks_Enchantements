@@ -66,5 +66,5 @@ def main():
             print("Choix invalide.")
 
 
-print("Robert Henning\n 30.9.2025\n MIT Licenses\n Numworks Enchantements \n Github")
+print("Robert Henning\n 30.9.2025 - 16.12.2025 \n MIT Licenses\n Numworks Enchantements \n Github")
 main()
