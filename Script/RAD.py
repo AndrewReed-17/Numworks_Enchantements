@@ -1,9 +1,12 @@
+from math import pi, *
+
 """
 Note : 
 - Char max ; 29
 """
 
-from math import *
+if not pi :
+  pi = 22/7
 
 def main():
     while True:
@@ -27,7 +30,7 @@ def RtD():
     try:
         f = int(f)
         d = int(d)
-        r = (f * math.pi / d) * (180 / math.pi)
+        r = (f * pi / d) * (180 / math.pi)
         print("\n===============\n{}π/{} radians = {} degres".format(f, d, r))
     except ValueError:
         print("Erreur : valeur non valide.")
@@ -77,5 +80,5 @@ def pgcd(a, b):
     return a << shift
 
 
-print("Robert Henning\n 24.9.2025 - 30.9.2025\n MIT Licenses\n Numworks Enchatements | Github")
+print("Robert Henning\n 24.9.2025 - 30.9.2025\n MIT Licenses\n Numworks Enchatements | GitHub")
 main()
